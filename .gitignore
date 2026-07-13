@@ -1,0 +1,6 @@
+# Python virtual environment
+.venv/
+
+# ignore any package metadata or build artifacts
+*.pyc
+__pycache__/
