@@ -1,0 +1,17 @@
+throw_number,timestamp(hour:min:sec),throw_type,player,score,time_left_fight,white_shido_count,blue_shido_count,white_wazari_count_prior,blue_wazari_count_prior,throw_attempts_prior_white,throw_attempts_prior_blue,weight_category,gender,is_golden_score
+191,00:01:37,forwards_throw,white,no_score,00:04:48,0,0,0,0,0,0,u78,f,false
+192,00:02:04,forwards_throw,white,no_score,00:04:29,0,0,0,0,1,0,u78,f,false
+193,00:02:21,forwards_throw,white,no_score,00:04:19,0,0,0,0,2,0,u78,f,false
+194,00:02:45,forwards_throw,white,wazari,00:04:05,0,0,0,0,3,0,u78,f,false
+195,00:03:20,forwards_throw,white,no_score,00:03:20,0,0,1,0,4,0,u78,f,false
+196,00:04:01,forwards_throw,white,no_score,00:03:15,0,0,1,0,5,0,u78,f,false
+197,00:04:30,forwards_throw,white,no_score,00:03:02,0,0,1,0,6,0,u78,f,false
+198,00:04:34,backwards_throw,blue,no_score,00:02:30,0,0,1,0,7,0,u78,f,false
+199,00:04:35,forwards_throw,white,no_score,00:02:57,0,0,1,0,7,1,u78,f,false
+200,00:05:05,forwards_throw,white,no_score,00:02:43,0,0,1,0,8,1,u78,f,false
+201,00:05:26,forwards_throw,white,no_score,00:02:29,0,0,1,0,9,1,u78,f,false
+202,00:05:44,forwards_throw,white,no_score,00:02:19,0,0,1,0,10,1,u78,f,false
+203,00:06:47,backwards_throw,blue,no_score,00:01:50,0,0,1,0,11,1,u78,f,false
+204,00:07:24,backwards_throw,white,no_score,00:01:26,0,0,1,0,11,2,u78,f,false
+205,00:07:46,backwards_throw,white,no_score,00:01:12,0,0,1,0,12,2,u78,f,false
+206,00:07:48,forwards_throw,white,wazari,00:01:10,0,0,1,0,13,2,u78,f,false

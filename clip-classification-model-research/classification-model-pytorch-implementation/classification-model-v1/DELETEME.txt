@@ -1,0 +1,3 @@
+gonna separate different versions of the model so should store them each as their own dir
+
+e.g. if i tweak the architecture of the model, don't delete the old one, just make a new dir with pytorch code

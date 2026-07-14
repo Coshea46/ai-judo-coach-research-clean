@@ -1,0 +1,1 @@
+throw_number,timestamp(hour:min:sec),throw_type,player,score,time_left_fight,white_shido_count,blue_shido_count,white_wazari_count_prior,blue_wazari_count_prior,throw_attempts_prior_white,throw_attempts_prior_blue,weight_category,gender,is_golden_score

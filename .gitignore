@@ -4,3 +4,6 @@
 # ignore any package metadata or build artifacts
 *.pyc
 __pycache__/
+
+# don't upload any mp4 files to github because of size
+*.mp4
