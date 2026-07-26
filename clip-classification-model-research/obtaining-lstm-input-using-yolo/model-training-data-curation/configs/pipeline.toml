@@ -1,0 +1,8 @@
+[yolo]
+model_path = "models/yolo11x-pose.pt"
+tracker_path = "configs/trackers/bytetrack.yaml"
+device = 0
+model_name = "yolo11x-pose"
+
+[debug]
+raw_detections_dir_name = "debug_raw_detections"

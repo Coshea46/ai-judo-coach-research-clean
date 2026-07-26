@@ -1,17 +1,56 @@
-# Python virtual environment
+# Python virtual environments
 .venv/
+venv/
+env/
 
-# ignore any package metadata or build artifacts
-*.pyc
+# Python cache / bytecode
 __pycache__/
+*.py[cod]
+*$py.class
 
-# don't upload any mp4 files to github because of size
+# Python packaging / build artifacts
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Test / coverage artifacts
+.pytest_cache/
+.coverage
+htmlcov/
+
+# IDE/editor files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Video files
 *.mp4
+*.mov
+*.avi
+*.mkv
 
-# don't upload any png files either so extracted frame files aren't uploaded because of size
+# Image/frame extraction files
 *.jpg
+*.jpeg
+*.png
 
-# Model weights
+# Model weights / exported models
 *.pt
 *.pth
 *.onnx
+
+# Generated outputs / debug artifacts
+outputs/
+output/
+debug_outputs/
+debug_raw_detections/
+*.pkl
+*.pickle
+*.npz
+
+# Logs
+*.log

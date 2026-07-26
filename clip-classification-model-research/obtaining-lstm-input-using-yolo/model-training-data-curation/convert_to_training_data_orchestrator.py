@@ -1,8 +1,12 @@
 import os
 import sys
 
-from config import ULTRALYTICS_YOLO_V11X_PATH, BYTETRACKER_PATH, COMPUTE_DEVICE
-from yolo_feeder import load_model, process_single_mp4
+from settings import load_settings
+from yolo_feeder import (
+    load_yolo_model,
+    track_video,
+    collect_clip_detections,
+)
 
 
 def convert_to_training_data_main(input_clip_dir_path: str, base_output_dir_path: str) -> None:
@@ -17,21 +21,23 @@ def convert_to_training_data_main(input_clip_dir_path: str, base_output_dir_path
         if f.endswith('.mp4')
     ]
 
-    yolo_model = load_model(yolo_model_path=ULTRALYTICS_YOLO_V11X_PATH)
+    settings = load_settings()
+    yolo_model = load_yolo_model(yolo_model_path=settings.yolo.model_path)
 
     # process all clips
     for clip_path in clip_paths:
         # pass to yolo to return generator
 
-        yolo_results_for_clip = process_single_mp4(
+        yolo_results_for_clip = track_video(
             yolo_model=yolo_model,
-            tracker=BYTETRACKER_PATH,
-            mp4_path=clip_path,
-            compute_device=COMPUTE_DEVICE
+            tracker_path=settings.yolo.tracker_path,
+            video_path=clip_path,
+            compute_device=settings.yolo.device,
         )
 
+
         # now figure out which poses are the players
-        
+
 
 
 def main(args):

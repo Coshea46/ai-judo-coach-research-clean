@@ -1,5 +1,9 @@
-from schemas.player import Player
+from schemas import keypoints
+from schemas.detections import PersonDetection, FrameDetections, ClipDetections
 
 __all__ = [
-    'player'
+    'keypoints',
+    'PersonDetection',
+    'FrameDetections',
+    'ClipDetections'
 ]
