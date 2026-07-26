@@ -1,0 +1,2 @@
+should contain the initial messy implementation of extracting frames of the clips to their own jpegs etc. 
+and converting them back to mp4's

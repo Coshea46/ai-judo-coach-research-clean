@@ -7,3 +7,11 @@ __pycache__/
 
 # don't upload any mp4 files to github because of size
 *.mp4
+
+# don't upload any png files either so extracted frame files aren't uploaded because of size
+*.jpg
+
+# Model weights
+*.pt
+*.pth
+*.onnx

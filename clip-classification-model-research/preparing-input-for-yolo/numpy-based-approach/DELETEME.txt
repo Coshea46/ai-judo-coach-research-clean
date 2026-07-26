@@ -1,1 +1,0 @@
-should contain the cleaner, more efficient approach that I want to use in the production pipelines

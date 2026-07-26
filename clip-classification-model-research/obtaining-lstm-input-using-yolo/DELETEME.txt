@@ -1,0 +1,1 @@
+should contain all of the code for the player detection system, passing the mp4 clips/numpy arrays to yolo, etc.
