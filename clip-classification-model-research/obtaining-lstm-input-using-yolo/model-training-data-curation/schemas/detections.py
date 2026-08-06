@@ -12,7 +12,8 @@ class PersonDetection:
     detection_idx: int   # index of the person detection within the given frame
     track_id: int | None  # temporary id assigned to this pose by bytetrack
 
-    bbox_xyxy_px: np.ndarray
+    bbox_xyxy_px: np.ndarray  # raw coords (not normalized)
+    bbox_xyxy_normalized: np.ndarray
     bbox_conf: float
 
     keypoints_xy_px: np.ndarray

@@ -12,39 +12,40 @@ class PlayerDetectionConfig:
     player detection system.
     Also stores sentinel values to be used.
 
-    All weight values are multipliers range from 0 to 1
+    Weight values are non-negative relative multipliers.
+    Feature values should generally be normalized to [0, 1].
     Bonuses are added to scores.
-    Penalties are subtracted from scores.
-
+    Penalties are positive magnitudes and are subtracted from scores.
 
     Storing as class allows easy passing to scoring
-    functions
+    functions.
     """
 
     missing_detection_sentinel: int = MISSING_DETECTION_SENTINEL
 
     keypoint_confidence_threshold: float = 0.3
 
-    # detection score weights
-    mean_keypoint_confidence_weight: float = 0.2
+    # bbox score weights
     bbox_confidence_weight: float = 0.2
+    bbox_center_closeness_weight: float = 0.4
 
-    # pose score weights
+    # pose score weights and normalization
+    mean_keypoint_confidence_weight: float = 0.2
     pose_size_weight: float = 0.6
-    closeness_to_center_weight: float = 0.4    # weights how close to the center of the screen a pose is
+    max_expected_normalized_body_length: float = 1.0
 
     # pair score weights (for scoring interactions between poses)
-    bbox_overlap_weight: float = 0.6
-    average_keypoint_proximity_weight: float = 0.7
+    bbox_overlap_weight: float = 0.4
+    pair_bbox_center_closeness_weight: float = 0.5
+    average_keypoint_proximity_weight: float = 0.4
 
     # transition score weights and penalties/bonuses
     same_track_id_bonus: float = 0.4
-    different_track_id_penalty: float = 0.4
-    bbox_center_distance_weight: float = 0.5   # helps detect jumps in pose assignment
+    bbox_center_distance_penalty_weight: float = 0.5
 
     # missing state penalties
-    one_player_missing_penalty: float = 0.3   # penalty for state if pose not assigned to one of the players 
+    one_player_missing_penalty: float = 0.3
     both_players_missing_penalty: float = 0.5
 
     # interpolation thresholds
-    longest_gap_allowed: int = 5   # longest gap in number of frames that should be interpolated
+    longest_gap_allowed: int = 5

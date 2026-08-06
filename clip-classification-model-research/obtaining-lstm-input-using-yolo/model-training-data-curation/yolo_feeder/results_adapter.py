@@ -160,6 +160,12 @@ def result_to_frame_detections(
         frame_idx=frame_idx,
     )
 
+    bbox_normalized_coords = _require_not_none(
+        value=_to_numpy(yolo_frame_result.boxes.xyxyn),
+        value_name="bbox normalized coordinates",
+        frame_idx=frame_idx,
+    )
+
     keypoints_raw = _require_not_none(
         value=_to_numpy(yolo_frame_result.keypoints.xy),
         value_name="raw keypoints",
@@ -183,6 +189,13 @@ def result_to_frame_detections(
     _require_matching_detection_count(
         value=bbx_confidence_scores,
         value_name="bbox confidence scores",
+        expected_count=n_people,
+        frame_idx=frame_idx,
+    )
+
+    _require_matching_detection_count(
+        value=bbox_normalized_coords,
+        value_name="bbox normalized coordinates",
         expected_count=n_people,
         frame_idx=frame_idx,
     )
@@ -221,6 +234,7 @@ def result_to_frame_detections(
             detection_idx=person_idx,
             track_id=track_id,
             bbox_xyxy_px=bbx_absolute_pixel_coords[person_idx],
+            bbox_xyxy_normalized=bbox_normalized_coords[person_idx],
             bbox_conf=bbx_confidence_scores[person_idx],
             keypoints_xy_px=keypoints_raw[person_idx],
             keypoints_xy_norm=keypoints_normalized[person_idx],
