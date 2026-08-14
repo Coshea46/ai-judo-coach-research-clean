@@ -49,3 +49,8 @@ class PlayerDetectionConfig:
 
     # interpolation thresholds
     longest_gap_allowed: int = 5
+
+    # pose sequence quality thresholds
+    min_resolved_keypoints_per_usable_frame: int = 6
+    max_unusable_frame_fraction_per_player: float = 0.20
+    max_consecutive_unusable_frames_per_player: int = 10

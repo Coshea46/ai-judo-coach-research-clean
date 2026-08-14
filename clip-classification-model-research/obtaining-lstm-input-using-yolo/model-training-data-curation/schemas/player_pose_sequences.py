@@ -15,7 +15,8 @@ class PlayerPoseSequence:
     keypoints_xy_norm: np.ndarray     # [T, 17, 2], float32
     keypoints_conf: np.ndarray        # [T, 17], float32
 
-    # useful for interpolation, details which frames in sequence had no detection for player
+    # mask for if player detection missing in frame
+    # true means player not detected in frame
     missing_mask: np.ndarray          # [T], bool
 
     # stores index of pose in FrameDetections person_detections array that each pose was from
@@ -34,6 +35,6 @@ class TwoPlayerPoseSequences:
     """
 
     clip_id: str
-    player_0: PlayerPoseSequence
-    player_1: PlayerPoseSequence
+    player_a_pose_sequence: PlayerPoseSequence
+    player_b_pose_sequence: PlayerPoseSequence
 
