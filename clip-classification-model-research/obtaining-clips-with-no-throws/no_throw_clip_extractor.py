@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-"""Extract the first 1,500 no-throw clips listed in an interval CSV."""
+"""Extract the first 1,500 no-throw clips as 210-frame, 30 FPS videos."""
 
 import argparse
 import csv
@@ -11,7 +11,11 @@ from dataclasses import dataclass
 from pathlib import Path
 
 
-DEFAULT_CLIP_LIMIT = 1500
+DEFAULT_CLIP_LIMIT = 2500  # 2500 to brace for dataloss later
+
+TARGET_DURATION_SECONDS = 7
+TARGET_FPS = 30
+TARGET_FRAME_COUNT = TARGET_DURATION_SECONDS * TARGET_FPS
 
 REQUIRED_COLUMNS = {
     "clip_id",
@@ -34,6 +38,7 @@ class Clip:
 
 def existing_file(value: str) -> Path:
     """Validate a file supplied as a command-line argument."""
+
     path = Path(value).expanduser()
 
     if not path.is_file():
@@ -46,6 +51,7 @@ def existing_file(value: str) -> Path:
 
 def existing_directory(value: str) -> Path:
     """Validate a directory supplied as a command-line argument."""
+
     path = Path(value).expanduser()
 
     if not path.is_dir():
@@ -58,9 +64,12 @@ def existing_directory(value: str) -> Path:
 
 def build_parser() -> argparse.ArgumentParser:
     """Create the command-line argument parser."""
+
     parser = argparse.ArgumentParser(
         description=(
-            "Extract the first clips listed in a no-throw interval CSV."
+            "Extract the first clips listed in a no-throw interval CSV "
+            f"as {TARGET_DURATION_SECONDS}-second, "
+            f"{TARGET_FPS}-FPS MP4 files."
         )
     )
 
@@ -97,6 +106,7 @@ def build_parser() -> argparse.ArgumentParser:
 
 def timestamp_to_seconds(timestamp: str) -> int:
     """Convert an HH:MM:SS timestamp to seconds."""
+
     try:
         hours, minutes, seconds = map(
             int,
@@ -115,6 +125,7 @@ def timestamp_to_seconds(timestamp: str) -> int:
 
 def validate_identifier(identifier: str, field_name: str) -> str:
     """Validate an identifier before using it as part of a file path."""
+
     identifier = identifier.strip()
 
     if not identifier:
@@ -129,9 +140,13 @@ def validate_identifier(identifier: str, field_name: str) -> str:
     return identifier
 
 
-def read_clips(intervals_csv: Path, limit: int) -> list[Clip]:
+def read_clips(
+    intervals_csv: Path,
+    limit: int,
+) -> list[Clip]:
     """Read up to the requested number of clips from the interval CSV."""
-    clips = []
+
+    clips: list[Clip] = []
 
     with intervals_csv.open(
         "r",
@@ -153,11 +168,12 @@ def read_clips(intervals_csv: Path, limit: int) -> list[Clip]:
 
         if missing_columns:
             missing = ", ".join(sorted(missing_columns))
+
             raise ValueError(
                 f"{intervals_csv} is missing required columns: {missing}"
             )
 
-        seen_clip_ids = set()
+        seen_clip_ids: set[str] = set()
 
         for csv_row_number, row in enumerate(reader, start=2):
             if len(clips) >= limit:
@@ -179,8 +195,13 @@ def read_clips(intervals_csv: Path, limit: int) -> list[Clip]:
                     f"duplicate clip_id {clip_id!r}"
                 )
 
-            start_timestamp = (row.get("start_timestamp") or "").strip()
-            end_timestamp = (row.get("end_timestamp") or "").strip()
+            start_timestamp = (
+                row.get("start_timestamp") or ""
+            ).strip()
+
+            end_timestamp = (
+                row.get("end_timestamp") or ""
+            ).strip()
 
             try:
                 start_seconds = timestamp_to_seconds(start_timestamp)
@@ -197,6 +218,13 @@ def read_clips(intervals_csv: Path, limit: int) -> list[Clip]:
                 raise ValueError(
                     f"{intervals_csv}: CSV data row {csv_row_number}: "
                     "end_timestamp must be after start_timestamp"
+                )
+
+            if duration_seconds != TARGET_DURATION_SECONDS:
+                raise ValueError(
+                    f"{intervals_csv}: CSV data row {csv_row_number}: "
+                    f"expected a {TARGET_DURATION_SECONDS}-second interval, "
+                    f"but got {duration_seconds} seconds"
                 )
 
             clips.append(
@@ -219,6 +247,7 @@ def get_source_video_path(
     source_videos_dir: Path,
 ) -> Path:
     """Return the source MP4 path for a clip."""
+
     source_video_path = (
         source_videos_dir / f"{clip.source_video_id}.mp4"
     )
@@ -237,7 +266,13 @@ def extract_clip(
     source_video_path: Path,
     output_dir: Path,
 ) -> Path:
-    """Extract one clip and return its output path."""
+    """
+    Extract one clip at 30 FPS with a maximum of 210 frames.
+
+    The FPS filter duplicates or drops source frames as necessary
+    to produce the required temporal format.
+    """
+
     output_path = output_dir / f"{clip.clip_id}.mp4"
     temporary_output_path = output_dir / f".{clip.clip_id}.part.mp4"
 
@@ -255,10 +290,14 @@ def extract_clip(
         "-i",
         str(source_video_path),
         "-t",
-        str(clip.duration_seconds),
+        str(TARGET_DURATION_SECONDS),
         "-map",
         "0:v:0",
         "-an",
+        "-vf",
+        f"fps={TARGET_FPS}",
+        "-frames:v",
+        str(TARGET_FRAME_COUNT),
         "-c:v",
         "libx264",
         "-preset",
@@ -297,6 +336,7 @@ def extract_clip(
 
 def main() -> int:
     """Extract the clips listed in the interval CSV."""
+
     parser = build_parser()
     args = parser.parse_args()
 
@@ -309,7 +349,10 @@ def main() -> int:
     output_dir = args.output_dir.expanduser().resolve()
 
     try:
-        output_dir.mkdir(parents=True, exist_ok=True)
+        output_dir.mkdir(
+            parents=True,
+            exist_ok=True,
+        )
 
         clips = read_clips(
             intervals_csv=args.intervals_csv,
@@ -332,14 +375,15 @@ def main() -> int:
 
         for index, clip in enumerate(clips, start=1):
             source_video_path = get_source_video_path(
-                clip,
-                args.source_videos_dir,
+                clip=clip,
+                source_videos_dir=args.source_videos_dir,
             )
 
             print(
                 f"[{index}/{total}] Extracting {clip.clip_id} "
                 f"from {clip.source_video_id} "
-                f"({clip.start_timestamp} to {clip.end_timestamp})",
+                f"({clip.start_timestamp} to {clip.end_timestamp}) "
+                f"as {TARGET_FRAME_COUNT} frames at {TARGET_FPS} FPS",
                 file=sys.stderr,
                 flush=True,
             )
@@ -360,7 +404,9 @@ def main() -> int:
         return 1
 
     print(
-        f"Successfully extracted {len(clips)} clips to {output_dir}",
+        f"Successfully extracted {len(clips)} clips to {output_dir}. "
+        f"Target format: {TARGET_FRAME_COUNT} frames at "
+        f"{TARGET_FPS} FPS.",
         file=sys.stderr,
     )
 

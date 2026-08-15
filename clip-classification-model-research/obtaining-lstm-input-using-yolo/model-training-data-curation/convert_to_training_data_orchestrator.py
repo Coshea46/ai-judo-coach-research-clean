@@ -23,7 +23,7 @@ def convert_to_training_data_main(
     LSTM input arrays and export:
 
     - lstm_inputs.npy
-    - training_manifest.parquet
+    - training_manifest.csv
     - clip_rejections.csv
     """
 
@@ -145,10 +145,10 @@ def convert_to_training_data_main(
 
     training_manifest_path = os.path.join(
         base_output_dir_path,
-        "training_manifest.parquet",
+        "training_manifest.csv",
     )
 
-    training_manifest.to_parquet(
+    training_manifest.to_csv(
         training_manifest_path,
         index=False,
     )
@@ -156,6 +156,11 @@ def convert_to_training_data_main(
     rejection_report = pd.DataFrame(
         rejection_rows,
         columns=["clip_id", "rejection_reason"],
+    ).astype(
+        {
+            "clip_id": "string",
+            "rejection_reason": "string",
+        }
     )
 
     rejection_report_path = os.path.join(

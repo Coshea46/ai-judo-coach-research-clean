@@ -54,3 +54,6 @@ debug_raw_detections/
 
 # Logs
 *.log
+
+# numpy files since generally massive for this project
+*.npy
