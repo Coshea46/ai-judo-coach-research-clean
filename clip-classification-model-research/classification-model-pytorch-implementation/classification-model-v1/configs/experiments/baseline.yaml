@@ -1,0 +1,46 @@
+experiment:
+  name: baseline
+  random_seed: 42
+  dataset_version: dataset_v1
+
+data:
+  inputs_path: data/dataset_v1/lstm_inputs.npy
+  labels_path: data/dataset_v1/labels.npy
+  manifest_path: data/dataset_v1/training_manifest.csv
+  split_manifest_path: splits/dataset_v1_stratified_seed_42.csv
+
+  expected_sequence_length: 210
+  expected_feature_count: 68
+
+split:
+  train_fraction: 0.80
+  validation_fraction: 0.10
+  test_fraction: 0.10
+
+model:
+  num_hidden_state_features_lstm: 128
+  num_layers: 2
+  classifier_hidden_size: 64
+  dropout_rate: 0.30
+  bidirectional: false
+
+loss:
+  class_weighting_mode: none
+  manual_positive_class_weight: null
+
+training:
+  batch_size: 32
+  num_workers: 0
+  pin_memory: true
+
+  num_epochs: 50
+  learning_rate: 0.001
+  weight_decay: 0.0001
+
+  device: auto
+
+evaluation:
+  classification_threshold: 0.50
+
+output:
+  runs_directory: runs
