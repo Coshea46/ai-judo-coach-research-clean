@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "v1-clip-classification-model"
+version = "0.1.0"
+description = "LSTM-based binary throw-attempt classifier for Judo Clipper."
+requires-python = ">=3.12"
+dependencies = [
+    "matplotlib",
+    "numpy",
+    "PyYAML",
+    "scikit-learn",
+    "torch",
+]
+
+
+[project.scripts]
+judo-train = "v1_clip_classification_model.cli.train:main"
+judo-evaluate = "v1_clip_classification_model.cli.evaluate:main"
+
+
+[tool.setuptools.packages.find]
+where = ["src"]

@@ -36,6 +36,7 @@ from v1_clip_classification_model.utilities import (
     select_device,
     should_pin_memory,
 )
+from v1_clip_classification_model.evaluation import save_loss_curve
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -292,6 +293,21 @@ def main() -> None:
             / "training_history.csv"
         ),
     )
+
+    loss_curve_path = save_loss_curve(
+        training_history_csv_path=training_history_path,
+        output_path=(
+            run_directory.plots_directory
+            / "loss_curve.png"
+        ),
+        plot_title=(
+            f"{experiment_config.experiment.name} Training Loss"
+        ),
+    )
+
+    print(f"Loss curve: {loss_curve_path}")
+
+
 
     print("Training completed successfully.")
     print(f"Run directory: {run_directory.root}")

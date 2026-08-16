@@ -2,7 +2,8 @@ from .loading import load_training_data
 from .splitting import(
     split_dataset,
     load_dataset_split_manifest,
-    save_dataset_split_manifest
+    save_dataset_split_manifest,
+    DatasetSplit
 )
 from .dataloaders import build_data_loaders
 from .dataset import JudoDataset
@@ -15,7 +16,7 @@ __all__ = [
     'JudoDataset',
     'validate_loaded_data',
     'load_dataset_split_manifest',
-    'save_dataset_split_manifest'
-
+    'save_dataset_split_manifest',
+    'DatasetSplit'
 ]
 
