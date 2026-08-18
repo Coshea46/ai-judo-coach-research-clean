@@ -1,5 +1,5 @@
 experiment:
-  name: gradient_clipping_and_bidirectional
+  name: baseline_with_gradient_clipping
   random_seed: 42
   dataset_version: dataset_v1
 
@@ -22,7 +22,7 @@ model:
   num_layers: 2
   classifier_hidden_size: 64
   dropout_rate: 0.30
-  bidirectional: true
+  bidirectional: false
 
 loss:
   class_weighting_mode: none

@@ -1,0 +1,24 @@
+{
+  "selected_threshold": 0.45,
+  "selection_split": "validation",
+  "selection_policy": "maximum_attempt_f1",
+  "checkpoint_name": "best",
+  "checkpoint_epoch": 40,
+  "metrics": {
+    "total_samples": 216,
+    "true_positives": 59,
+    "true_negatives": 119,
+    "false_positives": 20,
+    "false_negatives": 18,
+    "accuracy": 0.8240740740740741,
+    "num_attempts": 77,
+    "num_no_attempts": 139,
+    "attempt_precision": 0.7468354430379747,
+    "attempt_recall": 0.7662337662337663,
+    "attempt_f1": 0.7564102564102563,
+    "no_attempt_precision": 0.8686131386861314,
+    "no_attempt_recall": 0.8561151079136691,
+    "no_attempt_f1": 0.8623188405797102,
+    "macro_f1": 0.8093645484949832
+  }
+}

@@ -470,6 +470,39 @@ def _parse_training_config(
         section_name="training",
     ).lower()
 
+    raw_gradient_clip_max_norm = section.get(
+        "gradient_clip_max_norm"
+    )
+
+    gradient_clip_max_norm: float | None
+
+    if raw_gradient_clip_max_norm is None:
+        gradient_clip_max_norm = None
+    elif (
+        isinstance(raw_gradient_clip_max_norm, bool)
+        or not isinstance(
+            raw_gradient_clip_max_norm,
+            (int, float),
+        )
+    ):
+        raise ValueError(
+            "training.gradient_clip_max_norm must be "
+            "a number or null"
+        )
+    else:
+        gradient_clip_max_norm = float(
+            raw_gradient_clip_max_norm
+        )
+
+        if (
+            not np.isfinite(gradient_clip_max_norm)
+            or gradient_clip_max_norm <= 0.0
+        ):
+            raise ValueError(
+                "training.gradient_clip_max_norm must be "
+                "a finite number greater than zero"
+            )
+
     if batch_size <= 0:
         raise ValueError(
             "training.batch_size must be greater than zero"
@@ -517,6 +550,7 @@ def _parse_training_config(
         learning_rate=learning_rate,
         weight_decay=weight_decay,
         device=device,
+        gradient_clip_max_norm=gradient_clip_max_norm,
     )
 
 

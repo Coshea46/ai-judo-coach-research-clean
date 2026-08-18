@@ -75,6 +75,8 @@ class TrainingConfig:
     weight_decay: float
 
     device: str
+    gradient_clip_max_norm: float | None = None
+
 
 
 @dataclass(frozen=True, slots=True)

@@ -1,5 +1,5 @@
 experiment:
-  name: gradient_clipping_and_bidirectional
+  name: automatic_class_weighting
   random_seed: 42
   dataset_version: dataset_v1
 
@@ -25,7 +25,7 @@ model:
   bidirectional: true
 
 loss:
-  class_weighting_mode: none
+  class_weighting_mode: auto
   manual_positive_class_weight: null
 
 training:

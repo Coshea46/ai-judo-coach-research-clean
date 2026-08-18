@@ -1,3 +1,5 @@
+"""Training and validation loops for clip classification."""
+
 from dataclasses import dataclass
 
 import torch
@@ -36,20 +38,46 @@ class Trainer:
         device: torch.device,
         checkpoint_manager: CheckpointManager,
         non_blocking_transfer: bool,
+        gradient_clip_max_norm: float | None,
+        validation_criterion: nn.Module | None = None,
     ) -> None:
         """
         Store the dependencies that remain constant across epochs.
 
-        The model and criterion should already have been moved to
+        The model and loss modules should already have been moved to
         the configured device before constructing the Trainer.
+
+        The criterion is used as the training objective. When a separate
+        validation criterion is provided, it is used to calculate
+        validation loss and select checkpoints. Otherwise, the training
+        criterion is also used for validation.
+
+        A gradient_clip_max_norm value of None disables gradient
+        clipping. Otherwise, gradients are clipped to the configured
+        maximum norm before each optimiser step.
         """
+
+        if (
+            gradient_clip_max_norm is not None
+            and gradient_clip_max_norm <= 0.0
+        ):
+            raise ValueError(
+                "gradient_clip_max_norm must be greater than zero "
+                "or None"
+            )
 
         self.model = model
         self.criterion = criterion
+        self.validation_criterion = (
+            validation_criterion
+            if validation_criterion is not None
+            else criterion
+        )
         self.optimizer = optimizer
         self.device = device
         self.checkpoint_manager = checkpoint_manager
         self.non_blocking_transfer = non_blocking_transfer
+        self.gradient_clip_max_norm = gradient_clip_max_norm
 
     def train_one_epoch(
         self,
@@ -101,6 +129,14 @@ class Trainer:
                 )
 
             loss.backward()
+
+            if self.gradient_clip_max_norm is not None:
+                torch.nn.utils.clip_grad_norm_(
+                    parameters=self.model.parameters(),
+                    max_norm=self.gradient_clip_max_norm,
+                    error_if_nonfinite=True,
+                )
+
             self.optimizer.step()
 
             batch_size = inputs.shape[0]
@@ -109,7 +145,9 @@ class Trainer:
             total_samples += batch_size
 
         if total_samples == 0:
-            raise ValueError("Training DataLoader contains no samples")
+            raise ValueError(
+                "Training DataLoader contains no samples"
+            )
 
         return total_loss / total_samples
 
@@ -121,7 +159,8 @@ class Trainer:
         Run one validation epoch without updating model parameters.
 
         Returns:
-            The average loss per sample for the epoch.
+            The average unweighted loss per sample for the epoch when
+            an unweighted validation criterion has been provided.
         """
 
         self.model.eval()
@@ -150,7 +189,7 @@ class Trainer:
                         f"{tuple(labels.shape)}"
                     )
 
-                loss = self.criterion(
+                loss = self.validation_criterion(
                     model_outputs,
                     labels,
                 )
@@ -186,7 +225,9 @@ class Trainer:
         """
 
         if num_epochs <= 0:
-            raise ValueError("num_epochs must be greater than zero")
+            raise ValueError(
+                "num_epochs must be greater than zero"
+            )
 
         all_epoch_records: list[EpochRecord] = []
 

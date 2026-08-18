@@ -1,0 +1,74 @@
+release:
+  name: judo_clipper_classification_model_v1
+  version: "1.0.0"
+  dataset_version: dataset_v1
+  description: >
+    Binary clip-level classifier that predicts whether a seven-second
+    judo clip contains at least one throw attempt.
+
+source:
+  run_directory: runs/automatic_class_weighting_20260818T141400_791714Z
+  checkpoint: best
+  expected_checkpoint_epoch: 26
+  expected_validation_loss: 0.4006
+
+model:
+  model_class: JudoClipClassifierModel
+  num_features_per_frame: 68
+  num_hidden_state_features_lstm: 128
+  num_layers: 2
+  classifier_hidden_size: 64
+  dropout_rate: 0.30
+  bidirectional: true
+  output_type: raw_logit
+
+input:
+  sequence_length: 210
+  feature_count: 68
+  dtype: float32
+  expected_shape:
+    - 210
+    - 68
+  non_finite_policy: replace_with_zero
+  batch_dimension_added_by_inference_wrapper: true
+
+classification:
+  task: binary_clip_classification
+  probability_function: sigmoid
+  threshold: 0.55
+  threshold_source: validation_selected
+
+  negative_class:
+    value: 0
+    name: no_attempt
+
+  positive_class:
+    value: 1
+    name: throw_attempt
+
+training_provenance:
+  random_seed: 42
+  gradient_clip_max_norm: 1.0
+  class_weighting_mode: auto
+  resolved_positive_class_weight: 1.7994
+  checkpoint_selection_metric: unweighted_validation_loss
+
+evaluation:
+  validation:
+    total_samples: 216
+    accuracy: 0.8472
+    attempt_f1: 0.7950
+    macro_f1: 0.8366
+
+  test:
+    total_samples: 217
+    accuracy: 0.8203
+    attempt_precision: 0.7294
+    attempt_recall: 0.7949
+    attempt_f1: 0.7607
+    macro_f1: 0.8084
+
+export:
+  output_directory: releases/judo_clipper_model_v1
+  weights_filename: model_weights.pt
+  metadata_filename: model_metadata.yaml
