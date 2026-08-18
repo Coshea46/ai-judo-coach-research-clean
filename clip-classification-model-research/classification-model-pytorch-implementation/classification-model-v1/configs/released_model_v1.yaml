@@ -69,6 +69,6 @@ evaluation:
     macro_f1: 0.8084
 
 export:
-  output_directory: releases/judo_clipper_model_v1
+  output_directory: releases/judo_clipper_classification_model_v1
   weights_filename: model_weights.pt
   metadata_filename: model_metadata.yaml
