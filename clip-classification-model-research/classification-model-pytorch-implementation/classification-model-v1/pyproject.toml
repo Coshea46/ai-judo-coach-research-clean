@@ -19,7 +19,7 @@ dependencies = [
 [project.scripts]
 judo-train = "v1_clip_classification_model.cli.train:main"
 judo-evaluate = "v1_clip_classification_model.cli.evaluate:main"
-
+judo-export = "v1_clip_classification_model.cli.export:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
